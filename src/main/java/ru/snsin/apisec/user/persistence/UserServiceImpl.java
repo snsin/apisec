@@ -1,9 +1,11 @@
 package ru.snsin.apisec.user.persistence;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ru.snsin.apisec.user.UserDto;
 import ru.snsin.apisec.user.UserService;
 
@@ -30,6 +32,9 @@ class UserServiceImpl implements UserService {
             var errorMessage = validationResults.stream()
                     .map(ConstraintViolation::getMessage).collect(Collectors.joining());
             throw new RuntimeException("Couldn't create user " + errorMessage);
+        }
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(user.getEmail());
