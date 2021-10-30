@@ -1,10 +1,8 @@
 package ru.snsin.apisec.user;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collections;
@@ -19,6 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public Map<String, Object> createUser(@RequestBody @Valid UserDto user) {
         final long userId = userService.createUser(user);
         return Collections.singletonMap("id", userId);

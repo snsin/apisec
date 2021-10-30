@@ -34,7 +34,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .with(user("user")))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
