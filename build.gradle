@@ -24,16 +24,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.flywaydb:flyway-core:8.0.1'
+    implementation 'org.flywaydb:flyway-core:8.1.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.security:spring-security-oauth2-jose:5.5.1'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
     compileOnly 'org.projectlombok:lombok:1.18.22'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql:42.3.1'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test:5.5.1'
-    testRuntimeOnly 'com.h2database:h2:1.4.200'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'com.h2database:h2:2.0.202'
 }
 
 test {
