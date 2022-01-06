@@ -6,11 +6,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import ru.snsin.apisec.authentication.UserProperties;
 import ru.snsin.apisec.user.UserDto;
 import ru.snsin.apisec.user.UserService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,5 +47,26 @@ class UserServiceImpl implements UserService {
         credentials.setStatus("ACTIVE");
         credentialsRepository.save(credentials);
         return savedUser.getId();
+    }
+
+    @Override
+    public UserProperties getUserProperties(UserDto user) {
+
+        if (user == null || !validator.validate(user).isEmpty()) {
+            throw new IllegalArgumentException("Bad user params");
+        }
+        UserCredentials credentials = credentialsRepository.findByUserName(user.getEmail())
+                .orElseThrow();
+
+        var isPasswordCorrect = encoder.matches(user.getPassword(), credentials.getPassword());
+
+        if (!isPasswordCorrect || !"ACTIVE".equals(credentials.getStatus())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        UserEntity userEntity = userRepository.getByEmail(user.getEmail())
+                .orElseThrow();
+
+        return new UserProperties(userEntity.getEmail(), Collections.singletonList("USER"));
     }
 }
