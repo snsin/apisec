@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:${db.port}/apisec"
+    url: "jdbc:postgresql://localhost:5432/apisec"
     username: "${db.user}"
     password: "${db.password}"
   jpa:
