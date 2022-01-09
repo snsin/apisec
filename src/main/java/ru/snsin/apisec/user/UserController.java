@@ -1,7 +1,9 @@
 package ru.snsin.apisec.user;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.snsin.apisec.authentication.TokenService;
 
@@ -26,8 +28,13 @@ public class UserController {
     }
 
     @PostMapping(value = "/authenticate")
-    public Map<String, Object> authenticate(@RequestBody @Valid UserDto user) {
+    public ResponseEntity<Map<String, Object>> authenticate(@RequestBody @Valid UserDto user) {
         final var userProperties = userService.getUserProperties(user);
-        return tokenService.issueToken(userProperties.name(), userProperties.claims());
+        var accessToken = tokenService.issueAccessToken(userProperties.name(),
+                userProperties.claims());
+        Map<String, Object> body = Collections.singletonMap("access_token", accessToken);
+        var headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken));
+        return new ResponseEntity<>(body, headers, HttpStatus.OK);
     }
 }

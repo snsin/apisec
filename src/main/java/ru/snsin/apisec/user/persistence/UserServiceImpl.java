@@ -53,19 +53,19 @@ class UserServiceImpl implements UserService {
     public UserProperties getUserProperties(UserDto user) {
 
         if (user == null || !validator.validate(user).isEmpty()) {
-            throw new IllegalArgumentException("Bad user params");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         UserCredentials credentials = credentialsRepository.findByUserName(user.getEmail())
-                .orElseThrow();
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         var isPasswordCorrect = encoder.matches(user.getPassword(), credentials.getPassword());
 
         if (!isPasswordCorrect || !"ACTIVE".equals(credentials.getStatus())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
         UserEntity userEntity = userRepository.getByEmail(user.getEmail())
-                .orElseThrow();
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         return new UserProperties(userEntity.getEmail(), Collections.singletonList("USER"));
     }

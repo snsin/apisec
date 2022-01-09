@@ -5,15 +5,15 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -22,10 +22,10 @@ public class TokenServiceImpl implements TokenService {
     private final TokenParams authTokenParams;
 
     @Override
-    public Map<String, Object> issueToken(String subject, List<String> claims) {
+    public String issueAccessToken(String subject, List<String> claims) {
 
         if (!StringUtils.hasText(subject) || CollectionUtils.isEmpty(claims)) {
-            return Collections.singletonMap("error", "Bad request");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         Instant expirationDate = Instant.now().plusSeconds(authTokenParams.getDuration());
@@ -40,9 +40,9 @@ public class TokenServiceImpl implements TokenService {
             signedJWT.sign(authTokenParams.getSigner());
         } catch (JOSEException e) {
             e.printStackTrace();
-            return Collections.singletonMap("error", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return Collections.singletonMap("access_token", signedJWT.serialize());
+        return signedJWT.serialize();
     }
 }
