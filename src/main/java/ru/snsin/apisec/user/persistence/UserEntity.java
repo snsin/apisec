@@ -10,6 +10,7 @@ import java.util.Objects;
 @Table(schema = "app", name = "user")
 @Getter
 @Setter
+public
 class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
