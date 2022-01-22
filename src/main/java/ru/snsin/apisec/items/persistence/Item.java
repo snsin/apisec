@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.snsin.apisec.user.persistence.UserEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -27,8 +26,7 @@ public class Item {
     @Column(name = "price", precision = 9, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(name = "owner_name")
+    private String owner;
 
 }
